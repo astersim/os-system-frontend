@@ -1,34 +1,55 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-
+import { Routes, Route, Navigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import Layout from './components/Layout/Layout'
+import Login from './pages/Login/Login'
+import OrdersList from './pages/Orders/OrdersList'
+import OrderDetail from './pages/Orders/OrderDetail'
+import CreateOrder from './pages/Orders/CreateOrder'
+import UsersList from './pages/Users/UsersList'
+import CreateUser from './pages/Users/CreateUser'
+import ProductsList from './pages/Products/ProductsList'
+import CreateProduct from './pages/Products/CreateProduct'
+import ReportsList from './pages/Reports/ReportsList'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
+
+  useEffect(() => {
+    // Check if user is already logged in
+    const token = localStorage.getItem('authToken')
+    if (token) {
+      setIsAuthenticated(true)
+    }
+  }, [])
+
+  const handleLogin = () => {
+    setIsAuthenticated(true)
+    localStorage.setItem('authToken', 'fake-jwt-token')
+  }
+
+  const handleLogout = () => {
+    setIsAuthenticated(false)
+    localStorage.removeItem('authToken')
+  }
+
+  if (!isAuthenticated) {
+    return <Login onLogin={handleLogin} />
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <Layout onLogout={handleLogout}>
+      <Routes>
+        <Route path="/" element={<Navigate to="/orders" replace />} />
+        <Route path="/orders" element={<OrdersList />} />
+        <Route path="/orders/:id" element={<OrderDetail />} />
+        <Route path="/orders/new" element={<CreateOrder />} />
+        <Route path="/users" element={<UsersList />} />
+        <Route path="/users/new" element={<CreateUser />} />
+        <Route path="/products" element={<ProductsList />} />
+        <Route path="/products/new" element={<CreateProduct />} />
+        <Route path="/reports" element={<ReportsList />} />
+      </Routes>
+    </Layout>
   )
 }
 
