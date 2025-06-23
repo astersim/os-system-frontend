@@ -33,8 +33,12 @@ const OrderDetail = () => {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    if (id) {
-      loadOrderDetails(parseInt(id))
+    // Validação extra para evitar requisição com id inválido
+    if (id && !isNaN(Number(id))) {
+      loadOrderDetails(Number(id))
+    } else {
+      setError('ID da ordem de serviço inválido')
+      setLoading(false)
     }
   }, [id])
 
@@ -62,7 +66,7 @@ const OrderDetail = () => {
     }
   }
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string): 'warning' | 'info' | 'success' | 'error' | 'default' => {
     switch (status.toLowerCase()) {
       case 'aberta':
         return 'warning'
@@ -128,7 +132,7 @@ const OrderDetail = () => {
           </Typography>
           <Chip
             label={order.status}
-            color={getStatusColor(order.status) as any}
+            color={getStatusColor(order.status)}
           />
         </Box>
         <Button

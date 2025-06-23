@@ -14,9 +14,12 @@ import {
   CircularProgress,
   Tabs,
   Tab,
+  IconButton
 } from '@mui/material'
 import {
   Add as AddIcon,
+  Edit as EditIcon,
+  Delete as DeleteIcon
 } from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'
 import { clienteService } from '../../services/clienteService'
@@ -42,7 +45,6 @@ const UsersList = () => {
         clienteService.getAll(),
         tecnicoService.getAll()
       ])
-
       setClientes(clientesData)
       setTecnicos(tecnicosData)
     } catch (err) {
@@ -50,6 +52,30 @@ const UsersList = () => {
       console.error('Error loading users:', err)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleDeleteCliente = async (id: number) => {
+    const confirm = window.confirm('Tem certeza que deseja excluir este cliente?')
+    if (!confirm) return
+
+    try {
+      await clienteService.delete(id)
+      setClientes((prev) => prev.filter((c) => c.id !== id))
+    } catch (err) {
+      setError('Erro ao excluir cliente')
+    }
+  }
+
+  const handleDeleteTecnico = async (id: number) => {
+    const confirm = window.confirm('Tem certeza que deseja excluir este técnico?')
+    if (!confirm) return
+
+    try {
+      await tecnicoService.delete(id)
+      setTecnicos((prev) => prev.filter((t) => t.id !== id))
+    } catch (err) {
+      setError('Erro ao excluir técnico')
     }
   }
 
@@ -103,12 +129,13 @@ const UsersList = () => {
                   <TableCell>CPF/CNPJ</TableCell>
                   <TableCell>Telefone</TableCell>
                   <TableCell>Endereço</TableCell>
+                  <TableCell>Ações</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {clientes.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} align="center">
+                    <TableCell colSpan={7} align="center">
                       <Typography variant="body2" color="text.secondary">
                         Nenhum cliente encontrado
                       </Typography>
@@ -127,6 +154,14 @@ const UsersList = () => {
                           ? `${cliente.endereco.substring(0, 50)}...`
                           : cliente.endereco}
                       </TableCell>
+                      <TableCell>
+                        <IconButton color="primary" onClick={() => navigate(`/clients/${cliente.id}/edit`)}>
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton color="error" onClick={() => handleDeleteCliente(cliente.id)}>
+                          <DeleteIcon />
+                        </IconButton>
+                      </TableCell>
                     </TableRow>
                   ))
                 )}
@@ -144,12 +179,13 @@ const UsersList = () => {
                   <TableCell>Nome</TableCell>
                   <TableCell>Email</TableCell>
                   <TableCell>Cargo</TableCell>
+                  <TableCell>Ações</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {tecnicos.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={4} align="center">
+                    <TableCell colSpan={5} align="center">
                       <Typography variant="body2" color="text.secondary">
                         Nenhum técnico encontrado
                       </Typography>
@@ -162,6 +198,14 @@ const UsersList = () => {
                       <TableCell>{tecnico.nome}</TableCell>
                       <TableCell>{tecnico.email}</TableCell>
                       <TableCell>{tecnico.cargo}</TableCell>
+                      <TableCell>
+                        <IconButton color="primary" onClick={() => navigate(`/technicians/${tecnico.id}/edit`)}>
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton color="error" onClick={() => handleDeleteTecnico(tecnico.id)}>
+                          <DeleteIcon />
+                        </IconButton>
+                      </TableCell>
                     </TableRow>
                   ))
                 )}

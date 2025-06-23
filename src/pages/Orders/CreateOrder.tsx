@@ -93,7 +93,7 @@ const CreateOrder = () => {
         produtoServico: parseInt(formData.produtoServico),
         tecnico: parseInt(formData.tecnico),
         dataAbertura: formData.dataAbertura,
-        status: formData.status,
+        status: 'aberta',
         descricaoProblema: formData.descricaoProblema,
       }
 
@@ -212,22 +212,6 @@ const CreateOrder = () => {
                   }}
                   required
                 />
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <FormControl fullWidth required>
-                  <InputLabel>Status</InputLabel>
-                  <Select
-                    value={formData.status}
-                    label="Status"
-                    onChange={(e) => handleChange('status', e.target.value)}
-                  >
-                    <MenuItem value="aberta">Aberta</MenuItem>
-                    <MenuItem value="em andamento">Em Andamento</MenuItem>
-                    <MenuItem value="fechada">Fechada</MenuItem>
-                    <MenuItem value="cancelada">Cancelada</MenuItem>
-                  </Select>
-                </FormControl>
               </Grid>
 
               <Grid item xs={12}>

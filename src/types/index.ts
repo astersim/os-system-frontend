@@ -46,3 +46,10 @@ export interface OSWithDetails extends OS {
   tecnicoNome?: string
   produtoServicoNome?: string
 }
+
+export interface NotaFiscal {
+  id: number
+  dataEmissao: string
+  ordemDeServico: number
+  valorTotal: number
+}
